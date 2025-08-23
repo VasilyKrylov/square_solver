@@ -8,30 +8,30 @@
 
 
 
-int printAnswer(const float answers[], int numberOfAnswers);
+int printAnswer(const double answers[], int numberOfAnswers);
 
 
 
 
 
 
-int printAnswer(const float answers[], const int numberOfAnswers) {
+int printAnswer(const double answers[], const int numberOfAnswers) {
     if (numberOfAnswers == -1) {
         printf("Found infinite number of answers - ∞\n");
         return 0;
     }
     printf("Found %d number of answers\n", numberOfAnswers);
     for (int answerIndex = 0; answerIndex < numberOfAnswers; ++answerIndex) {
-        printf("x%d = %f\n", answerIndex, answers[answerIndex]);
+        printf("x%d = %lf\n", answerIndex, answers[answerIndex]);
     }
     printf("\n");
     return 0;
 }
 
 int main() {
-    float a = 0, b = 0, c = 0;
+    double a = 0, b = 0, c = 0;
     int numberOfAnswers = 0;
-    float answers[2] = {0};
+    double answers[2] = {0};
 
     printf("The quadratic equation solver\n");
     printf("Vasily Krylov 2025\n\n");
@@ -47,9 +47,10 @@ int main() {
     /*
         TODO:
             what is assert
-            check float valids
+            check double valids
             Book - 1.6
             doxygen
+            replace double to double
     */
     return 0;
 }

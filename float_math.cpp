@@ -3,11 +3,11 @@
 
 #include "float_math.h"
 
-const float EPS = 1e-9f;
+const double EPS = 1e-9f;
 
-int isEqual(float a, float b) {
+int isEqual(double a, double b) {
     return abs(a - b) <= EPS;
 }
-int isZero(float a) {
+int isZero(double a) {
     return isEqual(a, 0);
 }

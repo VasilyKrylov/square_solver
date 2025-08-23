@@ -4,8 +4,8 @@
 #include "solve.h"
 #include "float_math.h"
 
-int solveLinear(const float b, const float c,
-                int* numberOfAnswers, float *answers) {
+int solveLinear(const double b, const double c,
+                int* numberOfAnswers, double *answers) {
     if (isZero(b)) {
         if (isZero(c)) {
             *numberOfAnswers = -1;
@@ -26,8 +26,8 @@ int solveLinear(const float b, const float c,
     return 0;
 }
 
-int solveSquare(const float a, const float b, const float c, 
-                int *numberOfAnswers, float *answers) {
+int solveSquare(const double a, const double b, const double c, 
+                int *numberOfAnswers, double *answers) {
     // assert(std::isfinite (a));
     // assert(std::isfinite (b));
     // assert(std::isfinite (c));
@@ -36,8 +36,8 @@ int solveSquare(const float a, const float b, const float c,
         solveLinear(b, c, numberOfAnswers, answers);
         return 0;
     }
-    float discriminant = b * b - 4 * a * c;
-    float sqrtDiscriminant = sqrt(discriminant);
+    double discriminant = b * b - 4 * a * c;
+    double sqrtDiscriminant = sqrt(discriminant);
     if (isZero(discriminant)) {
         *numberOfAnswers = 1;
         if (isZero(b)) {

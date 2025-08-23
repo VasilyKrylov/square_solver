@@ -1,9 +1,9 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-int readFloat(float *a);
-int inputFloat(const char *greeting, float *a);
-int inputCoefficients(float *a, float *b, float *c);
+int readDouble(double *a);
+int inputDouble(const char *greeting, double *a);
+int inputCoefficients(double *a, double *b, double *c);
 bool checkBuffer();
 void soberUp();
 

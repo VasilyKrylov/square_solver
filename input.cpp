@@ -21,24 +21,24 @@ bool checkBuffer() {
     return countChars != 1;
 }
 
-int readFloat(float *a) {
-    int readArguments = scanf("%f", a);
+int readDouble(double *a) {
+    int readArguments = scanf("%lf", a);
 
     if (readArguments != 1) {
         checkBuffer();
-        printf("Please, input number in float format:\n");
+        printf("Please, input number in double format:\n");
         return -1;
     }
     if (checkBuffer()) {
-        printf("Please, input ONE number in float format WITHOUT ANY TRASH:\n");
+        printf("Please, input ONE number in double format WITHOUT ANY TRASH:\n");
         return -1;
     }
     return 0;
 }
-int inputFloat(const char *greeting, float *a) {
+int inputDouble(const char *greeting, double *a) {
     int attempts = MAX_ATTEMPTS;
     printf("%s:\n", greeting);
-    while (readFloat(a) != 0) {
+    while (readDouble(a) != 0) {
         --attempts;
         if (attempts == 0) {
             soberUp();
@@ -48,16 +48,16 @@ int inputFloat(const char *greeting, float *a) {
     return 0;
 }
 
-int inputCoefficients(float *a, float *b, float *c) {
-    if (inputFloat("Input first coefficient in float format", a) != 0) {
+int inputCoefficients(double *a, double *b, double *c) {
+    if (inputDouble("Input first coefficient in double format", a) != 0) {
         return -1;
     }
-    if (inputFloat("Input second coefficient in float format", b) != 0) {
+    if (inputDouble("Input second coefficient in double format", b) != 0) {
         return -1;
     }
-    if (inputFloat("Input third coefficient in float format", c) != 0) {
+    if (inputDouble("Input third coefficient in double format", c) != 0) {
         return -1;
     }
-    printf("Your quadratic equation is :\n %f*x^2 + %f*x + %f = 0\n", *a, *b, *c);
+    printf("Your quadratic equation is :\n %lf*x^2 + %lf*x + %lf = 0\n", *a, *b, *c);
     return 0;
 }
