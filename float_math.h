@@ -1,7 +1,10 @@
-#ifndef FLOAT_MATH_H
-#define FLOAT_MATH_H
+#ifndef SS_FLOAT_MATH_H
+#define SS_FLOAT_MATH_H
 
-int isEqual(double a, double b);
-int isZero(double a);
+int IsNan(double a);
+int IsInf(double a);
+int IsEqual(double a, double b);
+int IsZero(double a);
+void normalizeZero(double *a);
 
-#endif
+#endif // SS_FLOAT_MATH_H

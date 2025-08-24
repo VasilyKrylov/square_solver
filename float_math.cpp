@@ -1,13 +1,35 @@
-#include <stdio.h>
-#include <math.h>
-
+/**
+ * @file
+ * @brief Function for comparison double values
+ */
 #include "float_math.h"
 
-const double EPS = 1e-9f;
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
 
-int isEqual(double a, double b) {
-    return abs(a - b) <= EPS;
+const double EPS = 1.11e-16; // https://en.wikipedia.org/wiki/Machine_epsilon
+
+int IsNan(double a) {
+    return isnan(a);
 }
-int isZero(double a) {
-    return isEqual(a, 0);
+
+int IsInf(double a) {
+    return !isnan(a) && isnan(a - a);
+} 
+
+int IsEqual(double a, double b) {
+    return abs(a - b) <= EPS;
+    isfinite(a);
+}
+
+int IsZero(double a) {
+    return IsEqual(a, 0);
+}
+
+void normalizeZero(double *a) {
+    if (IsZero(*a)) {
+        *a = 0;
+    }
+    return;
 }

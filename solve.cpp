@@ -1,67 +1,60 @@
+#include "solve.h"
+
+#include "float_math.h"
+
 #include <stdio.h>
 #include <math.h>
 
-#include "solve.h"
-#include "float_math.h"
-
-int solveLinear(const double b, const double c,
-                int* numberOfAnswers, double *answers) {
-    if (isZero(b)) {
-        if (isZero(c)) {
-            *numberOfAnswers = -1;
-            return 0;
-        } else {
-            *numberOfAnswers = 0;
-            return 0;
-        }
+int SolveLinear(const double b, const double c,
+                double *answers) {
+    if (IsZero(b)) {
+        return (IsZero(c) ? INF : ZERO);
     } else {
-        *numberOfAnswers = 1;
-        if (isZero(c)) {
+        if (IsZero(c)) {
             answers[0] = 0;
         } else {
             answers[0] = -c / b;
         }
-        return 0;
+        return ONE;
     }
-    return 0;
+
+    return ERROR;
 }
 
-int solveSquare(const double a, const double b, const double c, 
-                int *numberOfAnswers, double *answers) {
+/**
+ * @param [in] a first coefficient of the quadratic equation
+ * @param [in] b second coefficient of the quadratic equation
+ * @param [in] c third coefficient of the quadratic equation
+ * @param [out] answers return x1 and x2 if found
+ * @returns number of found solves 
+ */
+int SolveSquare(const double a, const double b, const double c, 
+                double *answers) {
     // assert(std::isfinite (a));
     // assert(std::isfinite (b));
     // assert(std::isfinite (c));
 
-    if (isZero(a)) {
-        solveLinear(b, c, numberOfAnswers, answers);
-        return 0;
+    if (IsZero(a)) {
+        return SolveLinear(b, c, answers);
     }
+
     double discriminant = b * b - 4 * a * c;
     double sqrtDiscriminant = sqrt(discriminant);
-    if (isZero(discriminant)) {
-        *numberOfAnswers = 1;
-        if (isZero(b)) {
+    if (IsZero(discriminant)) {
+        if (IsZero(b)) {
             answers[0] = 0;
         } else {
             answers[0] = -b / (2 * a);
         }
-        return 0;
+        return ONE;
     }
-    else if (discriminant < 0) {
-        *numberOfAnswers = 0;
-        return 0;
+    if (discriminant < 0) {
+        return ZERO;
     }
-    else {
-        *numberOfAnswers = 2;
-        answers[0] = (-b - sqrtDiscriminant) / (2 * a);
-        answers[1] = (-b + sqrtDiscriminant) / (2 * a);
-        if (isZero(answers[0])) {
-            answers[0] = 0;
-        }
-        if (isZero(answers[1])) {
-            answers[1] = 0;
-        }
-        return 0;
-    }
-    return 0;
+
+    answers[0] = (-b - sqrtDiscriminant) / (2 * a);
+    answers[1] = (-b + sqrtDiscriminant) / (2 * a);
+    normalizeZero(&answers[0]);
+    normalizeZero(&answers[1]);
+    return TWO;
 }

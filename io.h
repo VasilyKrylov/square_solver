@@ -1,14 +1,14 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef SS_INPUT_H
+#define SS_INPUT_H
 
 // INPUT
-int readDouble(double *a);
-int inputDouble(const char *greeting, double *a);
-int inputCoefficients(double *a, double *b, double *c);
-bool checkBuffer();
-void soberUp();
+void SoberUp();
+bool CheckBuffer();
+int ReadDouble(double *a);
+int InputDouble(const char *greeting, double *a);
+int InputCoefficients(double *a, double *b, double *c);
 
 // OUTPUT
-int printAnswer(const double answers[], int numberOfAnswers);
+int PrintAnswer(const double answers[], int numberOfAnswers);
 
-#endif
+#endif // SS_INPUT_H
