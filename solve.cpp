@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
 int SolveLinear(const double b, const double c,
                 double *answers) {
@@ -33,6 +34,7 @@ int SolveSquare(const double a, const double b, const double c,
     // assert(std::isfinite (a));
     // assert(std::isfinite (b));
     // assert(std::isfinite (c));
+    // assert(answers == NULL);
 
     if (IsZero(a)) {
         return SolveLinear(b, c, answers);

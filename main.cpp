@@ -1,8 +1,3 @@
-/**
- * @file
- * @brief main file 
- */
-
 #include "float_math.h"
 #include "io.h"
 #include "solve.h"
@@ -11,6 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <cassert>
+#include <float.h>
 
 
 const char *greeting = "The quadratic equation solver\n"
@@ -27,17 +23,24 @@ const char *greeting = "The quadratic equation solver\n"
                         " ((_/`(____,-'\n";
 
 
-/**
- * Entry point of the program
- */
-int main(int argc, char **argv, char **envp) {
+int main(/*int argc, char **argv, char **envp*/) {
     printf("%s", greeting);
-        
-    if (TestSolveSquare() != 0) {
-        printf("Internal test failed. Please contact with developer");
+
+    fprintf(stdin, "%s:%d:%s [DEBUG]: Code works\n", __FILE__, __LINE__, __func__);
+    int testsStatus = TestSolveSquare();
+    fprintf(stdin, "%s:%d:%s [DEBUG]: Code works\n", __FILE__, __LINE__, __func__);
+
+    if (testsStatus == -1) {
+        printf("[ERROR] TestSolveSquare() failed. Please contact with developer\n");
         return 0;
     }
-        
+    if (testsStatus) {
+        printf("[ERROR] %d tests failed. Please contact with developer\n", testsStatus);
+        return 0;
+    }
+    fprintf(stdin, "%s:%d:%s [DEBUG]: Code works\n", __FILE__, __LINE__, __func__);
+
+
     double a = 0, b = 0, c = 0;
     double answers[2] = {0};
 
@@ -49,16 +52,22 @@ int main(int argc, char **argv, char **envp) {
         PrintAnswer(answers, nRoots);
     }
 
-    /*
-        TODO:
-            tests from file
-            fix nan and inf input
-            what is assert
-            doxygen continue
-            EOF - echo "121qwe" | ./main 
-            add more tests
-            ctl + shift +h - camelCase to PascalCase
-    */
     return 0;
 }
 
+
+/*
+TODO:
+    FIRST:
+        ReadTestLine
+    HARD:
+        Make input of a, b, c in one file(and make it safe)
+        CRITICAL:
+            MAKE SAFE INPUT in tests.cpp
+
+    tests from file
+    what is assert
+    doxygen continue
+    add more tests
+    ctl + shift +h - camelCase to PascalCase
+*/

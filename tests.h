@@ -1,14 +1,16 @@
 #ifndef SS_TESTS_H
 #define SS_TESTS_H
 
-struct test {
-    double a, b, c;
-    double x1, x2;
-    int nRoots;
-};
+#include "objects.h"
 
-bool TestAnswer(test tests, const double *result);
-bool TestNumberOfRoots(test tests, int nRoots);
+#include <stdlib.h>
+
+
+bool TestAnswer(Test tests, const double *result);
+bool TestNumberOfRoots(Test tests, int nRoots);
+int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t numberOfTests);
+int enumerateThrowTestSet(Test *tests, size_t length);
+int ReadTests();
 int TestSolveSquare();
 
 #endif // SS_TESTS_H

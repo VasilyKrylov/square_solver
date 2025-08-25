@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Function for comparison double values
+ * @brief Functions for comparison double values
  */
 #include "float_math.h"
 
@@ -24,7 +24,8 @@ int IsEqual(double a, double b) {
 }
 
 int IsZero(double a) {
-    return IsEqual(a, 0);
+    return abs(a) <= EPS;
+    //return IsEqual(a, 0);
 }
 
 void normalizeZero(double *a) {
