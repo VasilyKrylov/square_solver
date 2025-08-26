@@ -1,18 +1,19 @@
+/**
+ * @file
+ */
+
 #include "io.h"
 
 #include "float_math.h"
-#include "objects.h"
+#include "structures.h"
+#include "status_codes.h"
 
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-const int MAX_ATTEMPTS = 5;
-
-//--------------------------------------------------------------------------------------
-// FILE INPUT
-//--------------------------------------------------------------------------------------
+static const int MAX_ATTEMPTS = 5;
 
 /**
  * @brief check for trash chars in file buffer after fscanf() call
@@ -20,28 +21,50 @@ const int MAX_ATTEMPTS = 5;
  * @returns 0 if buffer clear\n
  *          1 if not
  */
-bool FileCheckBuffer(FILE **file) { // make one start lol *******************
+bool FileCheckBuffer(FILE *file);
+
+/**
+ * @brief check for trash chars in stdin buffer after scanf() call
+ * @returns 0 if buffer clear\n
+ *          1 if not
+ */
+bool CheckBuffer();
+
+/**
+ * @brief print funny message
+ */
+void SoberUp();
+
+/**
+ * @brief Check if input is correct(without trash symbols, without nan and inf)
+ * @param [in] a pointer to double to read
+ * @returns enum STATUS_[something]\n
+ *          InputDouble() processes this return codes
+ */
+int ReadDouble(double *a);
+
+//--------------------------------------------------------------------------------------
+// FILE INPUT
+//--------------------------------------------------------------------------------------
+
+
+bool FileCheckBuffer(FILE *file) {
     int countChars = 0;
     int trash = '\0';
 
     while (trash != '\n' && trash != EOF) {
-        trash = fgetc(*file);
+        trash = fgetc(file);
         ++countChars;
     }
 
     return countChars != 1;
 }
 
-/**
- * @brief sanitize input from tests file
- * @param [in] file to read tests from
- * @returns enum Status
- */
-int ReadTestLine(FILE **file, Test *test) {
+int ReadTestLine(FILE *file, Test *test) {
     assert(test != NULL);
 
     int readArguments = fscanf(
-        *file,
+        file,
         "%lf %lf %lf %lf %lf %d",
         &test->a, &test->b, &test->c,
         &test->x1, &test->x2, &test->nRoots
@@ -76,35 +99,29 @@ int ReadTestLine(FILE **file, Test *test) {
 //--------------------------------------------------------------------------------------
 
 void SoberUp() {
-    printf("User, looks you feels bad...\n"
-           "Sober up and return later)\n");
+    printf(
+        "\n"
+        "User, looks you feels bad...    \n"
+        "Sober up and return later)      \n"
+        "  ╱▔▏  zzzz                     \n"
+        " ╱◢▅▃                          \n"
+        "▕▔▇ ╯╲╭━━━━━━━━╮                \n"
+        "▕▕▋╯┛╯▏       ╱┃                \n"
+        "▕▕╭▔▔▔      ╮╱╱▏                \n"
+        "▕▕▂▂▂▂▂▂▂▂▂▂▂╱▏▏                \n"
+        "▕▕╭━╯┃▅╮╭▅┃╭▏▏▏▏                \n"
+        "▕▕┃╭━┫▅▂▅▅┣╯▏▏▔                 \n"
+        " ▔┃╰╮╰━━━━╯ ▔                   \n"
+        "  ╰╕╕╕                          \n"
+    );
 }
 
-/**
- * @brief check for trash chars in stdin buffer after scanf() call
- * @returns 0 if buffer clear\n
- *          1 if not
- */
+
 bool CheckBuffer() {
-    int countChars = 0;
-    int trash = '\0';
-    
-    while (trash != '\n' && trash != EOF) {
-        trash = getchar();
-        ++countChars;
-    }
-    
-    return countChars != 1;
-    // return FileCheckBuffer(stdin);
+    return FileCheckBuffer(stdin);
 }
 
 
-/**
- * @brief Check if input is correct(without trash symbols, without nan and inf)
- * @param [in] a pointer to double to read
- * @returns enum STATUS_[something]\n
- *          InputDouble() processes this return codes
- */
 int ReadDouble(double *a) {
     int readArguments = scanf("%lf", a);
     printf("\n");
@@ -128,13 +145,7 @@ int ReadDouble(double *a) {
     return STATUS_OK;
 }
 
-/**
- * @brief request user to input double until correct attempt
- * @param [in] a pointer to double to read
- * Check if input is correct(without trash symbols, without nan and inf) \n
- * @returns enum Status \n
- *          InputDouble() processes this return codes
- */
+
 int InputDouble(const char *greeting, double *a) {
     int attempts = MAX_ATTEMPTS;
     // printf("%s", greeting);
@@ -179,14 +190,6 @@ int InputDouble(const char *greeting, double *a) {
     return -1;
 }
 
-/**
- * @brief request for coefficients of quadratic equation and shows user input
- * @param [in] a pointer to first coefficient
- * @param [in] b pointer to second coefficient
- * @param [in] c pointer to third coefficient
- * @returns enum STATUS_[something] \n
- *          InputDouble() processes this return codes
- */
 int InputCoefficients(double *a, double *b, double *c) {
     if (InputDouble("Input coefficient as float number (0.5 for example):\n", a) != 0) {
         return -1;
@@ -204,14 +207,9 @@ int InputCoefficients(double *a, double *b, double *c) {
 }
 
 //--------------------------------------------------------------------------------------
-// OUTPUT
+// STDOUT OUTPUT
 //--------------------------------------------------------------------------------------
 
-/**
- * @brief Print answers to stdout
- * @param [in] answers values to print
- * @param [in] numberOfAnswers how many answers found
- */
 void PrintAnswer(const double answers[], const int numberOfAnswers) {
     if (numberOfAnswers == -1) { // ADD ENUM HERE !!!!!!
         printf("Found infinite number of answers - ∞\n");

@@ -1,11 +1,13 @@
 #include "tests.h"
 
+#include "float_math.h"
 #include "io.h"
 #include "solve.h"
-#include "float_math.h"
+#include "status_codes.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+
 
 /**
  * @brief check excepted answer and real result
@@ -55,8 +57,7 @@ int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t 
 
     for (size_t i = 0; i < *numberOfTests; ++i) {
 
-        FILE **testsFilePtr = &testsFile; //trash string
-        int ReadTestLineStatus = ReadTestLine(testsFilePtr, &testsFromFile[i]);
+        int ReadTestLineStatus = ReadTestLine(testsFile, &testsFromFile[i]);
         switch (ReadTestLineStatus)
         {
             case STATUS_OK:

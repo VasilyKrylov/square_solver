@@ -9,7 +9,7 @@
 #include <limits.h>
 #include <assert.h>
 
-const double EPS = 1.11e-16; // https://en.wikipedia.org/wiki/Machine_epsilon
+static const double EPS = 1.11e-16; // https://en.wikipedia.org/wiki/Machine_epsilon
 
 bool IsNan(double a) {
     return isnan(a);

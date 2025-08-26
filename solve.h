@@ -6,7 +6,7 @@ enum nRoots {
     ZERO = 0,
     ONE = 1,
     TWO = 2
-};
+}; // move to io.h
 
 int SolveLinear(double b, double c, double *answers);
 int SolveSquare(double a, double b, double c, double *answers);

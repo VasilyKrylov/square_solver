@@ -1,3 +1,6 @@
+/**
+ * @file
+ */
 #include "float_math.h"
 #include "io.h"
 #include "solve.h"
@@ -57,7 +60,9 @@ int main(/*int argc, char **argv, char **envp*/) {
 
 /*
 TODO:
-    move docs from cpp to headers
+    inconsistency with x1 and x2 in structures and answers (switch to x1, x2)
+
+    DOING: move docs from cpp to headers
     ReadTestsFromFile comment - Divide no right to read and no file to read
     sizeof(doubleArguments)/sizeof(doubleArguments[0]) replace to defines    
     make function statusDescription:
@@ -75,6 +80,7 @@ FIRST:
     tests ignore unused answers
     colored output
     makefile
-    doxygen continue
 
+
+    tests for user incorrect input
 */

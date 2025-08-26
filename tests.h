@@ -1,9 +1,10 @@
 #ifndef SS_TESTS_H
 #define SS_TESTS_H
 
-#include "objects.h"
+#include "structures.h"
 
 #include <stdlib.h>
+
 
 // MOVE SOME FUNCTIONS TO .cpp
 // sructure Test MUST BE HERE 
