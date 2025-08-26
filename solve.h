@@ -2,7 +2,6 @@
 #define SS_SOLVE_H
 
 enum nRoots {
-    ERROR = -2,
     INF = -1,
     ZERO = 0,
     ONE = 1,

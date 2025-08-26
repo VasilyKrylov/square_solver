@@ -20,8 +20,8 @@ bool TestAnswer(Test test, const double *result) { //result1, result2
 /**
  * @brief check excepted number of roots and real one
  */
-bool TestNumberOfRoots(Test tests, int nRoots) {
-    return tests.nRoots == nRoots;
+bool TestNumberOfRoots(const Test *tests, int nRoots) {
+    return tests->nRoots == nRoots;
 }
 
 /**
@@ -32,21 +32,52 @@ bool TestNumberOfRoots(Test tests, int nRoots) {
  * Format of tests in file:
  * First line = number of tests
  * next lines = a, b, c, d, x1, x2, numberOfRoots separated by \\t
+ * @returns number of test sets which contain errors
  */
-int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t numberOfTests) {
+int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t *numberOfTests) {
     FILE *testsFile = fopen(filename, "r");
     if (testsFile == NULL) {
-       printf("Error opening file \"%s\" with tests!\n", filename);
+        // !!!!!!!!
+        // Divide no right to read and no file to read
+        printf("Error opening file \"%s\" with tests!\n", filename);
+
        return -1;
     }
-    numberOfTests = 0;
-    fscanf(testsFile, "%lu", &numberOfTests);
-    Test *testsFromFile = (Test *)(calloc(numberOfTests, sizeof(Test)));
 
-    for (size_t i = 0; i < numberOfTests; ++i) {
+    *numberOfTests = 0;
+    fscanf(testsFile, "%lu\n", numberOfTests);
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
+    // DELELE numberOfTests and use realloc()
 
-        FILE **testsFilePtr = &testsFile;
-        ReadTestLine(testsFilePtr, &testsFromFile[i]);
+    // CHECK FOR NULL 
+    // VERY IMPORTANT !!!!!!
+    Test *testsFromFile = (Test *)(calloc(*numberOfTests, sizeof(Test)));
+
+    for (size_t i = 0; i < *numberOfTests; ++i) {
+
+        FILE **testsFilePtr = &testsFile; //trash string
+        int ReadTestLineStatus = ReadTestLine(testsFilePtr, &testsFromFile[i]);
+        switch (ReadTestLineStatus)
+        {
+            case STATUS_OK:
+                break;
+            case STATUS_INF:
+                printf("[ERROR]: %s contains incorrect test. INF value on line %lu. \n", filename, i + 2);
+                break;
+            case STATUS_NAN:
+                printf("[ERROR]: %s contains incorrect test. NAN value on line %lu. \n", filename, i + 2);
+                break;
+            case STATUS_NOT_DOUBLE:
+                printf("[ERROR]: %s contains incorrect test. No double on line %lu. \n", filename, i + 2);
+                break;
+            case STATUS_WITH_TRASH:
+                printf("[ERROR]: %s contains incorrect test. Trash symbols on line %lu. \n", filename, i + 2);
+                break;
+            default:
+                // assert(0 && "%s:%d:%s [ERROR]: internal crush - \n", __FILE__, __LINE__, __func__);
+                break;
+
+        }
         // fscanf(
         //     testsFile,
         //     "%lg\t%lg\t%lg\t%lg\t%lg\t%d",
@@ -81,12 +112,15 @@ int enumerateThrowTestSet(Test *tests, size_t length) {
         double results[2] = {0, 0};
         int nRoots = SolveSquare(tests[i].a, tests[i].b, tests[i].c, &results[0]);
 
+        // log.txt
+        // print good
+
         if (!TestAnswer(tests[i], results)) {
             printf(
                 "FAILED(on test number %lu):\n"
                 "\tSolveSquare(%lf, %lf, %lf) -> x1=%lf, x2=%lf.\n"
-                "\tShould be x1=%lf, x2=%lf.\n",
-                i,
+                "\tShould be x1=%lf, x2=%lf.\n\n",
+                i + 1,
                 tests[i].a, tests[i].b, tests[i].c,
                 results[0], results[1],
                 tests[i].x1, tests[i].x2
@@ -95,11 +129,11 @@ int enumerateThrowTestSet(Test *tests, size_t length) {
             failedTests++;
         }
 
-        if (!TestNumberOfRoots(tests[i], nRoots)) {
+        if (!TestNumberOfRoots(&tests[i], nRoots)) {
             printf(
                 "FAILED(on test number %lu):\n"
                 "\tSolveSquare(%lf, %lf, %lf) -> %d number of roots.\n"
-                "\tShould be %d number of roots.\n",
+                "\tShould be %d number of roots.\n\n",
                 i,
                 tests[i].a, tests[i].b, tests[i].c,
                 nRoots, tests[i].nRoots
@@ -131,19 +165,20 @@ int TestSolveSquare() {
         //-------------------------------------------------------------------------------------+
     };
 
-    fprintf(stdin, "%s:%d:%s [DEBUG]: Code works\n", __FILE__, __LINE__, __func__);
+    // fprintf(stdout, "%s:%d:%s [DEBUG]: Code works\n", __FILE__, __LINE__, __func__);
 
     int totalFailedTests = 0;
     Test* testSetFromFile = NULL;
     size_t numberOfTests = 0;
 
-    if (ReadTestsFromFile("tests.txt", &testSetFromFile, numberOfTests) == 0) {
+    if (ReadTestsFromFile("tests.txt", &testSetFromFile, &numberOfTests) == 0) {
         totalFailedTests += enumerateThrowTestSet(testSetFromFile, numberOfTests);
     } else {
         return -1;
     }
     free(testSetFromFile);
-
+    
+    // fprintf(stdout, "%s:%d:%s [DEBUG]: local tests from testsHardcoded[]\n\n", __FILE__, __LINE__, __func__);
     totalFailedTests += enumerateThrowTestSet(
         testsHardcoded,
         sizeof(testsHardcoded)/sizeof(testsHardcoded[0])

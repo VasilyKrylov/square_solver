@@ -5,10 +5,11 @@
 
 #include <stdlib.h>
 
-
+// MOVE SOME FUNCTIONS TO .cpp
+// sructure Test MUST BE HERE 
 bool TestAnswer(Test tests, const double *result);
-bool TestNumberOfRoots(Test tests, int nRoots);
-int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t numberOfTests);
+bool TestNumberOfRoots(const Test *tests, int nRoots);
+int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t *numberOfTests);
 int enumerateThrowTestSet(Test *tests, size_t length);
 int ReadTests();
 int TestSolveSquare();

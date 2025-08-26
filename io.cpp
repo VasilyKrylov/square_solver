@@ -1,13 +1,10 @@
-/**
- * @file
- * @brief Input-output system with input sanitazion
- */
-
 #include "io.h"
 
 #include "float_math.h"
 #include "objects.h"
 
+#include <assert.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -23,7 +20,7 @@ const int MAX_ATTEMPTS = 5;
  * @returns 0 if buffer clear\n
  *          1 if not
  */
-bool FileCheckBuffer(FILE **file) {
+bool FileCheckBuffer(FILE **file) { // make one start lol *******************
     int countChars = 0;
     int trash = '\0';
 
@@ -38,20 +35,18 @@ bool FileCheckBuffer(FILE **file) {
 /**
  * @brief sanitize input from tests file
  * @param [in] file to read tests from
- * @returns enum STATUS_[something]
+ * @returns enum Status
  */
 int ReadTestLine(FILE **file, Test *test) {
+    assert(test != NULL);
 
     int readArguments = fscanf(
         *file,
-        "%lf\t%lf\t%lf\t%lf\t%lf\t%d",
-        &test->a, &(*test).b, &(*test).c,
-        &test->x1, &(*test).x2, &test->nRoots
+        "%lf %lf %lf %lf %lf %d",
+        &test->a, &test->b, &test->c,
+        &test->x1, &test->x2, &test->nRoots
     );
 
-    double doubleArguments[] = {
-        (*test).a, (*test).b, (*test).c, (*test).x1, (*test).x2
-    };
     if (readArguments != 6) {
         FileCheckBuffer(file);
         return STATUS_NOT_DOUBLE;
@@ -59,6 +54,10 @@ int ReadTestLine(FILE **file, Test *test) {
     if (FileCheckBuffer(file)) {
         return STATUS_WITH_TRASH;
     }
+
+    double doubleArguments[] = {
+        test->a, test->b, test->c, test->x1, test->x2
+    };
 
     for (size_t i = 0; i < sizeof(doubleArguments)/sizeof(doubleArguments[0]); ++i) {
         if (IsInf(doubleArguments[i])) {
@@ -89,13 +88,14 @@ void SoberUp() {
 bool CheckBuffer() {
     int countChars = 0;
     int trash = '\0';
-
+    
     while (trash != '\n' && trash != EOF) {
         trash = getchar();
         ++countChars;
     }
-
+    
     return countChars != 1;
+    // return FileCheckBuffer(stdin);
 }
 
 
@@ -116,11 +116,12 @@ int ReadDouble(double *a) {
         return STATUS_NAN;
     }
 
+    // also clears buffer
+    bool hasTrash = CheckBuffer();
     if (readArguments != 1) {
-        CheckBuffer();
         return STATUS_NOT_DOUBLE;
     }
-    if (CheckBuffer()) {
+    if (hasTrash) {
         return STATUS_WITH_TRASH;
     }
 
@@ -130,9 +131,8 @@ int ReadDouble(double *a) {
 /**
  * @brief request user to input double until correct attempt
  * @param [in] a pointer to double to read
- * Prints \\n \n
  * Check if input is correct(without trash symbols, without nan and inf) \n
- * @returns enum STATUS_[something] \n
+ * @returns enum Status \n
  *          InputDouble() processes this return codes
  */
 int InputDouble(const char *greeting, double *a) {
@@ -157,21 +157,20 @@ int InputDouble(const char *greeting, double *a) {
         {
             case STATUS_OK:
                 return 0;
-                break;
             case STATUS_INF:
-                printf("ERROR: You entered INF\n");
+                printf("You entered INF\n");
                 break;
             case STATUS_NAN:
-                printf("ERROR: You entered NAN\n");
+                printf("You entered NAN\n");
                 break;
             case STATUS_NOT_DOUBLE:
-                printf("ERROR: You don't enter double\n");
+                printf("You don't enter double\n");
                 break;
             case STATUS_WITH_TRASH:
-                printf("ERROR: You entered number with trash symbols\n");
+                printf("You entered number with trash symbols\n");
                 break;
             default:
-                // assert(0 && "%s:%d:%s [ERROR]: internal crush - \n", __FILE__, __LINE__, __func__);
+                assert(0 && "[ERROR]: Unknown status from user");
                 break;
 
         }
@@ -189,13 +188,13 @@ int InputDouble(const char *greeting, double *a) {
  *          InputDouble() processes this return codes
  */
 int InputCoefficients(double *a, double *b, double *c) {
-    if (InputDouble("Input coefficient in double format(0.5 for example):\n", a) != 0) {
+    if (InputDouble("Input coefficient as float number (0.5 for example):\n", a) != 0) {
         return -1;
     }
-    if (InputDouble("Input second coefficient in double format(0.5 for example):\n", b) != 0) {
+    if (InputDouble("Input second coefficient as float number (0.5 for example):\n", b) != 0) {
         return -1;
     }
-    if (InputDouble("Input third coefficient in double format(0.5 for example):\n", c) != 0) {
+    if (InputDouble("Input third coefficient as float number (0.5 for example):\n", c) != 0) {
         return -1;
     }
 
@@ -209,12 +208,12 @@ int InputCoefficients(double *a, double *b, double *c) {
 //--------------------------------------------------------------------------------------
 
 /**
- * @brief ЧТО ЗДЕСЬ ПИСАТЬ, ЛЁША, ПОМОГИ
+ * @brief Print answers to stdout
  * @param [in] answers values to print
  * @param [in] numberOfAnswers how many answers found
  */
 void PrintAnswer(const double answers[], const int numberOfAnswers) {
-    if (numberOfAnswers == -1) {
+    if (numberOfAnswers == -1) { // ADD ENUM HERE !!!!!!
         printf("Found infinite number of answers - ∞\n");
     }
 

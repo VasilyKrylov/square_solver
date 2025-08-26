@@ -7,30 +7,33 @@
 #include <stdio.h>
 #include <math.h>
 #include <limits.h>
+#include <assert.h>
 
 const double EPS = 1.11e-16; // https://en.wikipedia.org/wiki/Machine_epsilon
 
-int IsNan(double a) {
+bool IsNan(double a) {
     return isnan(a);
 }
 
-int IsInf(double a) {
-    return !isnan(a) && isnan(a - a);
+bool IsInf(double a) {
+    return !isnan(a) && isnan(a - a); // compiler can break "a - a" with O3 or fastmath idk
 } 
 
-int IsEqual(double a, double b) {
+bool IsEqual(double a, double b) {
+    assert(isfinite(a));
+    assert(isfinite(b));
+
     return abs(a - b) <= EPS;
-    isfinite(a);
 }
 
-int IsZero(double a) {
-    return abs(a) <= EPS;
-    //return IsEqual(a, 0);
+bool IsZero(double a) {
+    assert(isfinite(a));
+    return IsEqual(a, 0);
 }
 
 void normalizeZero(double *a) {
+    assert(isfinite(*a));
     if (IsZero(*a)) {
         *a = 0;
     }
-    return;
 }
