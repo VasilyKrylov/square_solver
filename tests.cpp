@@ -1,6 +1,5 @@
 #include "tests.h"
 
-#include "colors.h"
 #include "float_math.h"
 #include "io.h"
 #include "solve.h"
@@ -106,6 +105,13 @@ int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t 
     // CHECK FOR NULL 
     // VERY IMPORTANT !!!!!!
     Test *testsFromFile = (Test *)(calloc(*numberOfTests, sizeof(Test)));
+    
+    if (testsFromFile == NULL) {
+        ERROR("[ERROR] opening file \"%s\" with tests: %s\n", filename, strerror(errno));
+        abort();
+    }
+
+    int incorrectLines = 0;
 
     for (size_t i = 0; i < *numberOfTests; ++i) {
 
@@ -114,23 +120,29 @@ int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t 
         {
             case STATUS_OK:
                 break;
+
+                
             case STATUS_INF:
+                incorrectLines++;
                 printf("[ERROR]: %s contains incorrect test. INF value on line %lu. \n", filename, i + 2);
                 break;
             case STATUS_NAN:
+                incorrectLines++;
                 printf("[ERROR]: %s contains incorrect test. NAN value on line %lu. \n", filename, i + 2);
                 break;
             case STATUS_NOT_DOUBLE:
+                incorrectLines++;
                 printf("[ERROR]: %s contains incorrect test. No double on line %lu. \n", filename, i + 2);
                 break;
             case STATUS_WITH_TRASH:
+                incorrectLines++;
                 printf("[ERROR]: %s contains incorrect test. Trash symbols on line %lu. \n", filename, i + 2);
                 break;
+
             default:
                 ERROR("%s: %s:%d: [ERROR]: Uknown status of number.\n", __func__, __FILE__, __LINE__);
                 abort();
                 break;
-
         }
         // fscanf(
         //     testsFile,
@@ -151,7 +163,7 @@ int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t 
 
     fclose(testsFile);
 
-    return 0;
+    return incorrectLines;
 }
 
 
@@ -217,12 +229,16 @@ int TestSolveSquare() {
     Test* testSetFromFile = NULL;
     size_t numberOfTests = 0;
 
-    if (ReadTestsFromFile("tests.txt", &testSetFromFile, &numberOfTests) == 0) {
+    int incorrectLines = ReadTestsFromFile("tests.txt", &testSetFromFile, &numberOfTests);
+
+    if (incorrectLines == 0) {
         totalFailedTests += enumerateThrowTestSet(testSetFromFile, numberOfTests);
     } 
     else {
-        return -1;
+        ERROR("%s: %s:%d: [ERROR]: %d lines of file with tests contain errors.\n", __func__, __FILE__, __LINE__, incorrectLines);
+        abort();
     }
+
     free(testSetFromFile);
     
     // fprintf(stdout, "%s:%d:%s [DEBUG]: local tests from testsHardcoded[]\n\n", __FILE__, __LINE__, __func__);

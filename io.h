@@ -11,7 +11,9 @@
 
 #include <stdio.h>
 
-// INPUT FILE 
+//--------------------------------------------------------------------------------------
+// FILE INPUT 
+//--------------------------------------------------------------------------------------
 
 /**
  * @brief Sanitize input from tests file
@@ -21,8 +23,25 @@
 int ReadTestLine(FILE *file, Test *test);
 
 //--------------------------------------------------------------------------------------
+// FILE OUTPUT
+//--------------------------------------------------------------------------------------
+
+static const char logFile[] = "log.txt";
+
+#define LOG(format, ...) fprintf(logFile format, __VA_ARGS__)
+
+//--------------------------------------------------------------------------------------
 // STDIN INPUT
 //--------------------------------------------------------------------------------------
+
+#define RED_BOLD_COLOR "\33[1;31m" // Color Start
+#define COLOR_END "\33[0m" // To flush out prev colors
+
+/**
+ * @brief Make colored output to stderr with \n 
+ *        Supports format string
+ */
+#define ERROR(format, ...) fprintf(stderr, RED_BOLD_COLOR format COLOR_END, __VA_ARGS__)
 
 /**
  * @brief Print information about \n 

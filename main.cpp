@@ -2,7 +2,6 @@
  * @file
  */
 
-#include "colors.h"
 #include "float_math.h"
 #include "io.h"
 #include "solve.h"
