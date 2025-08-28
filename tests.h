@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @brief Test program using precalculated values
+ */
+
+// TODO: Check roots by inserting them into square equation
+
 #ifndef SS_TESTS_H
 #define SS_TESTS_H
 
@@ -5,14 +12,11 @@
 
 #include <stdlib.h>
 
-
-// MOVE SOME FUNCTIONS TO .cpp
-// sructure Test MUST BE HERE 
-bool TestAnswer(Test tests, const double *result);
-bool TestNumberOfRoots(const Test *tests, int nRoots);
-int ReadTestsFromFile(const char *filename, Test **testsFromFilePointer, size_t *numberOfTests);
-int enumerateThrowTestSet(Test *tests, size_t length);
-int ReadTests();
+/**
+ * @brief get test sets and run enumerateThrowTestCase()
+ *
+ * @returns number of failed tests and -1 if error appeared in function // do failed/total
+ */
 int TestSolveSquare();
 
 #endif // SS_TESTS_H

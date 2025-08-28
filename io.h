@@ -14,7 +14,7 @@
 // INPUT FILE 
 
 /**
- * @brief sanitize input from tests file
+ * @brief Sanitize input from tests file
  * @param [in] file to read tests from
  * @returns enum Status
  */
@@ -25,7 +25,15 @@ int ReadTestLine(FILE *file, Test *test);
 //--------------------------------------------------------------------------------------
 
 /**
- * @brief request user to input double until correct attempt
+ * @brief Print information about \n 
+ *        * program \n 
+ *        * developer \n 
+ *        * poltorashka's friend
+ */
+void PrintHeader();
+
+/**
+ * @brief Request user to input double until correct attempt
  * @param [in] a pointer to double to read
  * Check if input is correct(without trash symbols, without nan and inf) \n
  * @returns enum Status \n
@@ -34,7 +42,7 @@ int ReadTestLine(FILE *file, Test *test);
 int InputDouble(const char *greeting, double *a);
 
 /**
- * @brief request for coefficients of quadratic equation and shows user input
+ * @brief Request for coefficients of quadratic equation and shows user input
  * @param [in] a pointer to first coefficient
  * @param [in] b pointer to second coefficient
  * @param [in] c pointer to third coefficient
@@ -52,6 +60,6 @@ int InputCoefficients(double *a, double *b, double *c);
  * @param [in] answers values to print
  * @param [in] numberOfAnswers how many answers found
  */
-void PrintAnswer(const double answers[], int numberOfAnswers);
+void PrintAnswer(const double x1, const double x2, const int numberOfAnswers);
 
 #endif // SS_IO_H

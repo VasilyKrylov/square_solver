@@ -1,9 +1,13 @@
 /**
  * @file
+ * @brief Input-output system. \n
+ *        Some function's may be used outside this project. \n 
+ *        InputDouble() for example. \n
  */
 
 #include "io.h"
 
+#include "colors.h"
 #include "float_math.h"
 #include "structures.h"
 #include "status_codes.h"
@@ -14,7 +18,7 @@
 #include <stdlib.h>
 
 static const int MAX_ATTEMPTS = 5;
-
+    
 /**
  * @brief check for trash chars in file buffer after fscanf() call
  * @param [in] file to check
@@ -22,6 +26,13 @@ static const int MAX_ATTEMPTS = 5;
  *          1 if not
  */
 bool FileCheckBuffer(FILE *file);
+
+/**
+ * @brief Check necessary number of roots for correct input depending on number of roots.
+ * @param [out] test to extract roots from
+ * @returns enum Status
+ */
+int checkRoots(Test *test);
 
 /**
  * @brief check for trash chars in stdin buffer after scanf() call
@@ -60,6 +71,58 @@ bool FileCheckBuffer(FILE *file) {
     return countChars != 1;
 }
 
+int checkRoots(Test *test) {
+    switch (test->nRoots)
+    {
+        case INF_ROOTS:
+        case ZERO_ROOTS:
+            return STATUS_OK;
+        
+        case ONE_ROOT:
+        {
+            if (IsInf(test->a)) {
+                return STATUS_INF;
+            }
+            if (IsNan(test->a)) {
+                return STATUS_NAN;
+            }
+            
+            return STATUS_OK;
+        }
+        
+        case TWO_ROOTS:
+        {
+            if (IsInf(test->a)) {
+                return STATUS_INF;
+            }
+            if (IsNan(test->a)) {
+                return STATUS_NAN;
+            }
+
+            if (IsInf(test->b)) {
+                return STATUS_INF;
+            }
+            if (IsNan(test->b)) {
+                return STATUS_NAN;
+            }
+            return STATUS_OK;
+        }
+
+        default:
+            ERROR("%s: %s:%d: [ERROR]: Uknown number of roots while checking.\n", __func__, __FILE__, __LINE__);
+            abort();
+            break;
+    }
+
+    ERROR(
+          "%s: %s:%d: [ERROR]: Uknown number of roots.\n"
+          "Unnecessary error check. \n"
+          "You should never see this message.\n", 
+          __func__, __FILE__, __LINE__
+    );
+    abort();
+}
+
 int ReadTestLine(FILE *file, Test *test) {
     assert(test != NULL);
 
@@ -70,68 +133,78 @@ int ReadTestLine(FILE *file, Test *test) {
         &test->x1, &test->x2, &test->nRoots
     );
 
+    int hasTrash = FileCheckBuffer(file);
     if (readArguments != 6) {
-        FileCheckBuffer(file);
         return STATUS_NOT_DOUBLE;
     }
-    if (FileCheckBuffer(file)) {
+    if (hasTrash) {
         return STATUS_WITH_TRASH;
     }
 
-    double doubleArguments[] = {
-        test->a, test->b, test->c, test->x1, test->x2
+    double coefficients[] = {
+        test->a, test->b, test->c
     };
 
-    for (size_t i = 0; i < sizeof(doubleArguments)/sizeof(doubleArguments[0]); ++i) {
-        if (IsInf(doubleArguments[i])) {
+    for (size_t i = 0; i < sizeof(coefficients)/sizeof(coefficients[0]); ++i) {
+        if (IsInf(coefficients[i])) {
             return STATUS_INF;
         }
-        if (IsNan(doubleArguments[i])) {
+        if (IsNan(coefficients[i])) {
             return STATUS_NAN;
         }
     }
 
-    return STATUS_OK;
+    return checkRoots(test);
 }
 
 //--------------------------------------------------------------------------------------
 // STDIN INPUT
 //--------------------------------------------------------------------------------------
 
-void SoberUp() {
-    printf(
-        "\n"
-        "User, looks you feels bad...    \n"
-        "Sober up and return later)      \n"
-        "  ╱▔▏  zzzz                     \n"
-        " ╱◢▅▃                          \n"
-        "▕▔▇ ╯╲╭━━━━━━━━╮                \n"
-        "▕▕▋╯┛╯▏       ╱┃                \n"
-        "▕▕╭▔▔▔      ╮╱╱▏                \n"
-        "▕▕▂▂▂▂▂▂▂▂▂▂▂╱▏▏                \n"
-        "▕▕╭━╯┃▅╮╭▅┃╭▏▏▏▏                \n"
-        "▕▕┃╭━┫▅▂▅▅┣╯▏▏▔                 \n"
-        " ▔┃╰╮╰━━━━╯ ▔                   \n"
-        "  ╰╕╕╕                          \n"
-    );
+static const char *initialInfo = 
+    "The quadratic equation solver\n"
+    "Vasily Krylov 2025\n"
+    "https://vasily.su | t.me/kvas1lek\n"
+    " ,_     _\n"
+    " |\\_,-~/\n"
+    " / _  _ |    ,--.\n"
+    "(  @  @ )   / ,-'\n"
+    " \\  _T_/-._( (\n"
+    " /         `. \\\n"
+    "|         _  \\ |\n"
+    " \\ \\ ,  /      |\n"
+    "  || |-_\\__   /\n"
+    " ((_/`(____,-'\n";
+
+void PrintHeader() {
+    printf("%s", initialInfo);
 }
 
+static const char *jokeExit = 
+    "\n"
+    "User, looks you feels bad...\n"
+    "Sober up and return later)\n"
+    "  ╱▔▏  zzzz\n"
+    " ╱◢▅▃\n"
+    "▕▔▇ ╯╲╭━━━━━━━━╮\n"
+    "▕▕▋╯┛╯▏       ╱┃\n"
+    "▕▕╭▔▔▔      ╮╱╱▏\n"
+    "▕▕▂▂▂▂▂▂▂▂▂▂▂╱▏▏\n"
+    "▕▕╭━╯┃▅╮╭▅┃╭▏▏▏▏\n"
+    "▕▕┃╭━┫▅▂▅▅┣╯▏▏▔\n"
+    " ▔┃╰╮╰━━━━╯ ▔\n"
+    "  ╰╕╕╕\n";
+
+void SoberUp() {
+    printf("%s", jokeExit);
+}
 
 bool CheckBuffer() {
     return FileCheckBuffer(stdin);
 }
 
-
 int ReadDouble(double *a) {
     int readArguments = scanf("%lf", a);
-    printf("\n");
-
-    if (IsInf(*a)) {
-        return STATUS_INF;
-    }
-    if (IsNan(*a)) {
-        return STATUS_NAN;
-    }
 
     // also clears buffer
     bool hasTrash = CheckBuffer();
@@ -140,6 +213,13 @@ int ReadDouble(double *a) {
     }
     if (hasTrash) {
         return STATUS_WITH_TRASH;
+    }
+    
+    if (IsInf(*a)) {
+        return STATUS_INF;
+    }
+    if (IsNan(*a)) {
+        return STATUS_NAN;
     }
 
     return STATUS_OK;
@@ -157,7 +237,8 @@ int InputDouble(const char *greeting, double *a) {
         if (!attempts) {
             SoberUp();
             return -1;
-        } else {
+        } 
+        else {
             printf("%s", greeting);
         }
 
@@ -169,19 +250,20 @@ int InputDouble(const char *greeting, double *a) {
             case STATUS_OK:
                 return 0;
             case STATUS_INF:
-                printf("You entered INF\n");
+                printf("You entered INF.\n");
                 break;
             case STATUS_NAN:
-                printf("You entered NAN\n");
+                printf("You entered NAN.\n");
                 break;
             case STATUS_NOT_DOUBLE:
-                printf("You don't enter double\n");
+                printf("You don't enter double.\n");
                 break;
             case STATUS_WITH_TRASH:
-                printf("You entered number with trash symbols\n");
+                printf("You entered number with trash symbols.\n");
                 break;
             default:
-                assert(0 && "[ERROR]: Unknown status from user");
+            ERROR("%s: %s:%d: [ERROR]: Uknown type of double.\n", __func__, __FILE__, __LINE__);
+            abort();
                 break;
 
         }
@@ -191,17 +273,43 @@ int InputDouble(const char *greeting, double *a) {
 }
 
 int InputCoefficients(double *a, double *b, double *c) {
-    if (InputDouble("Input coefficient as float number (0.5 for example):\n", a) != 0) {
+    if (InputDouble("\nInput first coefficient as float number (0.5 for example):\n", a) != 0) {
         return -1;
     }
-    if (InputDouble("Input second coefficient as float number (0.5 for example):\n", b) != 0) {
+    if (InputDouble("\nInput second coefficient as float number (0.5 for example):\n", b) != 0) {
         return -1;
     }
-    if (InputDouble("Input third coefficient as float number (0.5 for example):\n", c) != 0) {
+    if (InputDouble("\nInput third coefficient as float number (0.5 for example):\n", c) != 0) {
         return -1;
     }
 
-    printf("\nYour quadratic equation is :\n\t%lf*x^2 + %lf*x + %lf = 0\n", *a, *b, *c);
+    // printf("\nYour quadratic equation is :\n\t%lf*x^2 + %lf*x + %lf = 0\n", *a, *b, *c);
+    printf("\nYour equation is :\n");
+
+    if (!IsZero(*a)) {
+        printf("%lg*x^2", *a);
+
+        if (!IsZero(*b)) {
+            printf(" + %lg*x", *b);
+        }
+        if (!IsZero(*c)) {
+            printf(" + %lg", *c);
+        }
+    } 
+    else {
+        if (!IsZero(*b)) {
+            printf("%lg*x", *b);
+
+            if (!IsZero(*c)) {
+                printf(" + %lg", *c);
+            }
+        }
+        else {
+            printf("%lg", *c);
+        }
+    }
+
+    printf(" = 0\n");
 
     return 0;
 }
@@ -210,15 +318,38 @@ int InputCoefficients(double *a, double *b, double *c) {
 // STDOUT OUTPUT
 //--------------------------------------------------------------------------------------
 
-void PrintAnswer(const double answers[], const int numberOfAnswers) {
-    if (numberOfAnswers == -1) { // ADD ENUM HERE !!!!!!
+void PrintAnswer(const double x1, const double x2, const int numberOfAnswers) {
+    // yes, array more scalable solutions
+    // with big power comes big responsibility
+    // such as index out of range
+    // Vadim told me, what array inside struct is safe
+    // I should check it by myslef
+
+    if (numberOfAnswers == INF_ROOTS) {
         printf("Found infinite number of answers - ∞\n");
+        return;
     }
 
-    printf("Found %d number of answers\n", numberOfAnswers);
-    for (int answerIndex = 0; answerIndex < numberOfAnswers; ++answerIndex) {
-        printf("\tx%d = %.20lg\n", answerIndex, answers[answerIndex]);
+    if (numberOfAnswers == ZERO_ROOTS) {
+        printf("Where is no roots for this \n");
+        return;
     }
-    printf("\n");
+
+    if (numberOfAnswers == ONE_ROOT) {
+        printf("Found 1 answer:\n");
+        printf("\tx = %lg\n", x1);
+        return;
+    }
+
+    if (numberOfAnswers == TWO_ROOTS) {
+        printf("Found 2 answers:\n");
+        printf("\tx_1 = %lg\n", x1);
+        printf("\tx_2 = %lg\n", x2);
+        return;
+    }
+    
+    ERROR("%s: %s:%d: [ERROR]: Uknown number of roots detected while printing.\n", __func__, __FILE__, __LINE__);
+    abort();
+    // printf("\n");
 }
 //--------------------------------------------------------------------------------------

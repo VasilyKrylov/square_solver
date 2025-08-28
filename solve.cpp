@@ -1,64 +1,72 @@
 #include "solve.h"
 
 #include "float_math.h"
+#include "status_codes.h"
+#include "structures.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
 
 int SolveLinear(const double b, const double c,
-                double *answers) {
+                double *x1) {
+    *x1 = NAN;
+
     if (IsZero(b)) {
-        return (IsZero(c) ? INF : ZERO);
+        return (IsZero(c) ? INF_ROOTS : ZERO_ROOTS);
     }
     if (IsZero(c)) {
-        answers[0] = 0;
-    } else {
-        answers[0] = -c / b;
+        *x1 = 0;
+    } 
+    else {
+        *x1 = -c / b;
     }
-    return ONE;
+
+    return ONE_ROOT;
 }
 
-/**
- * @param [in] a first coefficient of the quadratic equation
- * @param [in] b second coefficient of the quadratic equation
- * @param [in] c third coefficient of the quadratic equation
- * @param [out] answers return x1 and x2 if found and must be at least 2 doubles size
- * @returns number of found solves: \n
-    INF = -1, \n
-    ZERO = 0, \n
-    ONE = 1, \n
-    TWO = 2 \n
- */
+
 int SolveSquare(const double a, const double b, const double c, 
-                double *answers) {
-    assert(std::isfinite (a));
-    assert(std::isfinite (b));
-    assert(std::isfinite (c));
-    assert(answers != NULL);
+                double *x1, double *x2) {
+    assert(IsFinite(a));
+    assert(IsFinite(b));
+    assert(IsFinite(c));
+
+    assert(x1 != NULL);
+    assert(x2 != NULL);
+    assert(x1 != x2);
+
+    *x1 = NAN;
+    *x2 = NAN;
 
     if (IsZero(a)) {
-        return SolveLinear(b, c, answers);
+        return SolveLinear(b, c, x1);
     }
 
     double discriminant = b * b - 4 * a * c;
+
     if (IsZero(discriminant)) {
         if (IsZero(b)) {
-            answers[0] = 0;
-        } else {
-            answers[0] = -b / (2 * a);
+            *x1 = 0;
+        } 
+        else {
+            *x1 = -b / (2 * a);
         }
-        return ONE;
+        return ONE_ROOT;
     }
+    
     if (discriminant < 0) {
-        return ZERO;
+        return ZERO_ROOTS;
     }
     
     double sqrtDiscriminant = sqrt(discriminant);
-    answers[0] = (-b - sqrtDiscriminant) / (2 * a);
-    answers[1] = (-b + sqrtDiscriminant) / (2 * a);
-    normalizeZero(&answers[0]);
-    normalizeZero(&answers[1]);
+
+    *x1 = (-b - sqrtDiscriminant) / (2 * a);
+    *x2 = (-b + sqrtDiscriminant) / (2 * a);
+
+    normalizeZero(x1);
+    normalizeZero(x2);
     
-    return TWO;
+    return TWO_ROOTS;
 }

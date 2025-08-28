@@ -1,7 +1,3 @@
-/**
- * @file
- * @brief Functions for comparison double values
- */
 #include "float_math.h"
 
 #include <stdio.h>
@@ -16,23 +12,28 @@ bool IsNan(double a) {
 }
 
 bool IsInf(double a) {
-    return !isnan(a) && isnan(a - a); // compiler can break "a - a" with O3 or fastmath idk
+    // compiler can break "a - a" with O3 or fastmath meow
+    return !isnan(a) && isnan(a - a); 
 } 
 
 bool IsEqual(double a, double b) {
-    assert(isfinite(a));
-    assert(isfinite(b));
+    assert(IsFinite(a));
+    assert(IsFinite(b));
 
     return abs(a - b) <= EPS;
 }
 
 bool IsZero(double a) {
-    assert(isfinite(a));
+    assert(IsFinite(a));
     return IsEqual(a, 0);
 }
 
+bool IsFinite(double a) {
+    return !IsInf(a) && !IsNan(a);
+}
+
 void normalizeZero(double *a) {
-    assert(isfinite(*a));
+    assert(IsFinite(*a));
     if (IsZero(*a)) {
         *a = 0;
     }

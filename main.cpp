@@ -1,66 +1,55 @@
 /**
  * @file
  */
+
+#include "colors.h"
 #include "float_math.h"
 #include "io.h"
 #include "solve.h"
+#include "status_codes.h"
 #include "tests.h"
+#include "utils.h"
 
 #include <stdio.h>
 #include <math.h>
 #include <cassert>
 #include <float.h>
 
-static const char *greeting = 
-    "The quadratic equation solver\n"
-    "Vasily Krylov 2025\n"
-    " ,_     _\n"
-    " |\\_,-~/\n"
-    " / _  _ |    ,--.\n"
-    "(  @  @ )   / ,-'\n"
-    " \\  _T_/-._( (\n"
-    " /         `. \\\n"
-    "|         _  \\ |\n"
-    " \\ \\ ,  /      |\n"
-    "  || |-_\\__   /\n"
-    " ((_/`(____,-'\n";
-
-
 int main(/*int argc, char **argv, char **envp*/) {
-    printf("%s", greeting); // add another function
-
-    // fprintf(stdout, "%s:%d:%s [DEBUG]: Code works\n", __FILE__, __LINE__, __func__);
+    PrintHeader();
+    
     int testsStatus = TestSolveSquare();
 
     if (testsStatus == -1) {
-        printf("[ERROR] TestSolveSquare() failed. Please contact with developer\n");
+        ERROR("[ERROR] %d tests failed. Please contact with developer https://t.me/kvas1lek.\n", testsStatus);
         return 0;
     }
-    if (testsStatus) {
-        printf("[ERROR] %d tests failed. Please contact with developer https://t.me/kvas1lek\n", testsStatus);
+
+    if (testsStatus != 0) {
+        ERROR("[ERROR] %d tests failed. Please contact with developer https://t.me/kvas1lek.\n", testsStatus);
         return 0;
     }
-    // fprintf(stdout, "%s:%d:%s [DEBUG]: Code works\n", __FILE__, __LINE__, __func__);
 
-
-    double a = 0, b = 0, c = 0;
-    double answers[2] = {0}; //make it in structure
+    Coefficients coeffs = {.a = 0, .b = 0, .c = 0};
+    Answer answer = {.x1 = 0, .x2 = 0, .nRoots = 0};
 
     while (true) {
-        if (InputCoefficients(&a, &b, &c) == -1) {
+        if (InputCoefficients(&coeffs.a, &coeffs.b, &coeffs.c) == -1) {
             return 0;
         }
-        int nRoots = SolveSquare(a, b, c, answers);
-        PrintAnswer(answers, nRoots);
+
+        int nRoots = SolveSquare(coeffs.a, coeffs.b, coeffs.c, &answer.x1, &answer.x2);
+        
+        PrintAnswer(answer.x1, answer.x2, nRoots);
     }
 
     return 0;
 }
 
-
 /*
 TODO:
-    inconsistency with x1 and x2 in structures and answers (switch to x1, x2)
+    (i do not care about this now): 
+        inconsistency with x1 and x2 in structures and answers (switch to x1, x2)
 
     DOING: move docs from cpp to headers
     ReadTestsFromFile comment - Divide no right to read and no file to read
